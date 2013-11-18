@@ -1,0 +1,74 @@
+<apex:page controller="new_CloseAndNextController">
+	<!-- 
+		The only visible element on this page. This is the chatter feed 
+		that the user can see in the Custom Console Component. 
+	-->
+	<chatter:feed entityId="{!$User.Id}" />
+	
+	<!-- 
+		The rest of this page is being used for event handling.
+		Two use cases are captured here
+		
+		1 - Primary tab navigation. When a user clicks between two primary tabs we 
+		wanted to refresh the sidebar component. An application level component was 
+		required to detect this navigation and then fire the same refreshEvent to the 
+		sidebar components.
+	-->
+	<apex:includeScript value="/support/console/29.0/integration.js" />   
+	<script type="text/javascript">
+		// need to refresh sidebar components from an application level component.
+		sforce.console.onFocusedPrimaryTab(function (result) {
+
+			sforce.console.fireEvent('refreshEvent',result.objectId, function(result) {
+				if(result.success) {
+					console.log('OnFocusedSubTab has fired refresh event ['+result.objectId+']');
+				} else {
+					console.log('OnFocusedSubTab failed to fire refresh event ['+result.objectId+']');
+				}
+			});	
+		});	
+	</script>
+	
+	<!-- 
+		2 - Custom Keyboard Shortcuts. Keyboard shortcuts that are configured need to specify an
+		event that is published through the standard eventing framework that is part of the console toolkit.
+		We are using this VF page at an application level to register the event handler for that particular 
+		event. 
+		From here, we will call the controller specified to handle our close and next case logic.
+	-->
+	<script type="text/javascript">
+	
+		sforce.console.addEventListener('customKey.closeAndNextCase', function () {
+			
+			sforce.console.getFocusedSubtabObjectId(function(result) {
+				Visualforce.remoting.Manager.invokeAction(
+	            	'{!$RemoteAction.new_CloseAndNextController.closeAndNext}',
+	            	result.id, 
+	            	processCloseCase
+	        	);			
+			});
+			
+		});
+
+		function processCloseCase(data, event) {
+			console.log('processing.....');
+			if(event.status) {
+				if(data != null && data != 'null') {
+					sforce.console.getFocusedSubtabId(function (result) {
+						console.log('closing tab id ['+result.id+']');
+						sforce.console.closeTab(result.id);
+						console.log('Now open tab URL [/'+data+']');
+						sforce.console.getFocusedPrimaryTabId(function(primaryTab) {
+							sforce.console.openSubtab(primaryTab.id, '/'+data, true, '', null);
+						});
+					});
+				} else {
+					console.log(data);
+				}
+			} else {
+				console.log(data);
+			}
+		}
+
+	</script>
+</apex:page>

@@ -1,0 +1,135 @@
+<apex:page showHeader="false" controller="new_SidebarMilestoneController" action="{!createNewTopics}">
+    <apex:includeScript value="{!$Resource.cometd}"/>
+    <apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!$Resource.json2}"/>
+    <apex:includeScript value="{!$Resource.jquery_cometd}"/>
+    <apex:includeScript value="/support/console/29.0/integration.js" /> 
+    <style type="text/css">
+    	#milestoneAlerts {
+    		margin-top: 5px;
+    		margin-left: 5px;
+    	}
+    	.violationAlert {
+    		background-image:url('{!$Resource.milestone_violated}');
+    		background-repeat:no-repeat;
+    		background-color: rgb(125,37,30);
+    		font-size: 11px;
+    		height: 20px;
+    		padding-left: 30px;
+    		padding-top: 6px;
+    		margin: 2px
+    	}
+    	
+    	.warningAlert {
+    		background-image:url('{!$Resource.milestone_warning}');
+    		background-repeat:no-repeat;
+    		background-color: #e36c17;
+    		font-color: #FFFFFF;
+    		font-size: 11px;
+    		height: 20px;
+    		padding-left: 30px;
+    		padding-top: 6px;
+    		margin: 2px;
+    	}
+    </style>
+    
+    <div id="milestoneAlerts">
+    	<div id="violationAlerts"></div>
+    	<div id="warningAlerts"></div>
+    </div>    
+      
+    <script type="text/javascript">
+    	
+    	var j$ = jQuery.noConflict();
+    	
+    	j$(document).ready(function() {
+    		
+    		   	// arrays of JS Objects that have alerted
+    		var warningArray = new Array();
+    		var violationArray = new Array();
+    	
+    		j$.cometd.init({
+    			url: window.location.protocol+'//'+window.location.hostname+'/cometd/29.0/',
+    			requestHeaders: {Authorization: 'OAuth {!$Api.Session_ID}'}
+    		});
+    		
+    		// subscribe to Violations
+    		j$.cometd.subscribe('/topic/{!violatedTopicName}', function(violationMessage) {
+    			console.log(violationMessage);
+    			addViolation(violationMessage.data.sobject);
+    		});
+    		
+    		// subscribe to Warnings
+    		j$.cometd.subscribe('/topic/{!warningTopicName}', function(warningMessage) {
+    			console.log(warningMessage);
+    			addWarning(warningMessage.data.sobject);
+    		});
+		
+			function addWarning(caseObj) {
+			
+				warningArray.push(caseObj);
+				renderAlerts();
+			}
+			
+			function addViolation(caseObj) {
+			
+				violationArray.push(caseObj);	
+				renderAlerts();
+			}
+			
+			function renderAlerts() {
+				
+				j$("#warningAlerts").html('');
+				j$("#violationAlerts").html('');
+				if(warningArray.length > 0) {
+					var warningHtml = '';
+					for(var i=0 ; i<warningArray.length ; i++) {
+						var w = warningArray[i];
+						if(typeof w.Id != 'undefined')
+							warningHtml += '<div class="warningAlert" caseId="'+w.Id+'">'+w.CaseNumber+' WARNING</div>';	
+					}
+					j$("#warningAlerts").html(warningHtml);
+					sforce.console.setCustomConsoleComponentButtonIconUrl('{!$Resource.milestone_warning}');
+					sforce.console.setCustomConsoleComponentButtonText('WARNINGS');
+					sforce.console.setCustomConsoleComponentButtonStyle('background:#e36c17; font-size:12pt;font-weight:bold; color:#FFFFFF');
+					
+				} 
+				if(violationArray.length > 0) {
+					var violationHtml = '';
+					for(var j=0 ; j<violationArray.length ; j++) {
+						var v = violationArray[i];
+						if(typeof v.Id != 'undefined')
+							violationHtml = '<div class="violationAlert" caseId="'+w.Id+'">'+v.CaseNumber+' VIOLATED</div>';	
+					}
+					j$("#violationAlerts").html(violationHtml);
+					sforce.console.setCustomConsoleComponentButtonIconUrl('{!$Resource.milestone_violated}');
+					sforce.console.setCustomConsoleComponentButtonText('VIOLATIONS');
+					sforce.console.setCustomConsoleComponentButtonStyle('background:rgb(125,37,30);font-size:12pt;font-weight:bold;color:#FFFFFF');
+				}
+				
+				if((warningArray == null || warningArray.length) == 0 && (violationArray == null || violationArray.length == 0)) {
+					sforce.console.setCustomConsoleComponentWindowVisible(false);
+					sforce.console.setCustomConsoleComponentButtonIconUrl('');
+					sforce.console.setCustomConsoleComponentButtonText('Milestones');
+					sforce.console.setCustomConsoleComponentButtonStyle('');
+				} else {
+					sforce.console.setCustomConsoleComponentWindowVisible(true);
+				}
+			}
+    	
+    		j$('.warningAlert').bind("click", function () {
+    			console.log('have click on warningalert');
+    		});
+    		
+    		j$('.violationAlert').bind("click", function() {
+    			console.log('have click on violationalert');
+    		})
+   
+    	
+    	});
+    	
+    </script>
+    
+
+    
+</apex:page>

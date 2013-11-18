@@ -1,0 +1,26 @@
+<apex:page >
+	<apex:includeScript value="/support/console/29.0/integration.js" />  
+
+  		<apex:canvasApp id="canvasApp" developerName="Order_Console_Component" 
+			parameters="{mode:'configure'}" maxHeight="infinite" maxWidth="infinite" 
+			scrolling="auto"/>
+<!-- 
+	<script type="text/javascript">
+		Sfdc.canvas(function () {
+			Sfdc.canvas.parent.subscribe({name : "consoleDemoEvents.openOrderList", 
+				onData : function (payload) {
+					// we should be receiving orderId and accountId (external) from Canvas app
+					var windowURL = '/apex/cs_orderdetail?orderNumber='+payload.orderId+'&custId='+payload.accountId;
+					if(sforce.console.isInConsole()) {
+						sforce.console.getFocusedPrimaryTabId(function (result) {
+    						sforce.console.openSubtab(result.id, windowURL, true, 'Order Detail', null);	
+    					});
+					} else {
+						window.open(windowURL);
+					}
+				}
+			});
+		});	
+	</script>
+ -->
+</apex:page>

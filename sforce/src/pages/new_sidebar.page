@@ -1,0 +1,44 @@
+<apex:page showHeader="false" sidebar="false" standardController="Account">
+    <apex:stylesheet value="{!URLFOR($Resource.cs_sidebar_style)}"/>
+    <apex:includeScript value="{!$Resource.SlickCTI_jQuery}"/>
+	<apex:stylesheet value="{!$Resource.console_component_style}"/>
+    <!-- Include the Javascript library for the Service Cloud toolkit -->
+    <apex:includeScript value="/support/console/29.0/integration.js" />   
+	<style>
+		.sidepanel {
+			padding-left:3px;
+			padding-right: 3px;
+		}
+	</style>
+	<!-- Pages that are listening for a the refresh event -->
+	<div class="sidepanel">
+		<apex:include pageName="new_sidebar_map"/>
+		<apex:include pageName="new_sidebar_knowledge"/>
+ 		<apex:include pageName="new_sidebar_cases"/> 
+ 		<apex:include pageName="new_sidebar_opportunities"/> 
+ 		<apex:include pageName="new_sidebar_tasks"/> 
+ 		
+ 	</div>
+ 	
+ 	<!-- Javascript fires events to broadcast need for components to decide what state they need to be in -->
+ 	<script type="text/javascript">
+ 	
+	 	sforce.console.onEnclosingTabRefresh(function(result) {
+			fireRefresh(result.objectId);
+		});
+		
+		sforce.console.onFocusedSubtab(function (result) {
+			fireRefresh(result.objectId);
+		});	 
+
+		function fireRefresh(objectId) {
+			sforce.console.fireEvent('refreshEvent', objectId, function(result) {
+				if(result.success) {
+					console.log('OnFocusedSubTab has fired refresh event ['+result.objectId+']');
+				} else {
+					console.log('OnFocusedSubTab failed to fire refresh event ['+result.objectId+']');
+				}
+			});		
+		}
+ 	</script>
+</apex:page>

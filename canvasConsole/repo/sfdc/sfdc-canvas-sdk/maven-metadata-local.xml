@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>sfdc</groupId>
+  <artifactId>sfdc-canvas-sdk</artifactId>
+  <versioning>
+    <versions>
+      <version>1.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20131002033559</lastUpdated>
+  </versioning>
+</metadata>

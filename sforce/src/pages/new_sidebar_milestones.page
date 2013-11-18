@@ -1,0 +1,75 @@
+<apex:page showHeader="false" controller="new_SidebarMilestoneController" action="{!createNewTopics}">
+    <apex:includeScript value="{!$Resource.cometd}"/>
+    <apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!$Resource.json2}"/>
+    <apex:includeScript value="{!$Resource.jquery_cometd}"/>
+    <style type="text/css">
+    	#milestoneAlerts {
+    		margin-top: 5px;
+    		margin-left: 5px;
+    	}
+    	.violationAlert {
+    		background-image:url('{!$Resource.milestone_violated}');
+    		background-repeat:no-repeat;
+    		height: 20px;
+    		padding-left: 30px;
+    		padding-top: 6px;
+    	}
+    	
+    	.warningAlert {
+    		background-image:url('{!$Resource.milestone_warning}');
+    		background-repeat:no-repeat;
+    		height: 20px;
+    		padding-left: 30px;
+    		padding-top: 6px;
+    	}
+    </style>
+    
+    <div id="milestoneAlerts">
+    	<div id="violationAlerts"></div>
+    	<div id="warningAlerts"></div>
+    </div>    
+    
+    <script type="text/javascript">
+    	
+    	var j$ = jQuery.noConflict();
+    	j$(document).ready(function() {
+    	
+    		j$.cometd.init({
+    			url: window.location.protocol+'//'+window.location.hostname+'/cometd/29.0/',
+    			requestHeaders: {Authorization: 'OAuth {!$Api.Session_ID}'}
+    		});
+    		
+    		// subscribe to Violations
+    		j$.cometd.subscribe('/topic/{!violatedTopicName}', function(violationMessage) {
+    			console.log(violationMessage);
+				$('#violationAlerts').append('<div class="violationAlert"><a href="#" onclick="javascript:openCase(\''+violationMessage.data.sobject.Id+'\')">'+violationMessage.data.sobject.CaseNumber+'</a> has violated a milestone</div>');
+    		});
+    		
+    		// subscribe to Warnings
+    		j$.cometd.subscribe('/topic/{!warningTopicName}', function(warningMessage) {
+    			console.log(warningMessage);
+				$('#warningAlerts').append('<div class="warningAlert"><a href="#" onclick="javascript:openCase(\''+warningMessage.data.sobject.Id+'\')">'+warningMessage.data.sobject.CaseNumber+'</a> is approaching a milestone</div>');
+    		});
+    		
+    		
+    		
+    		
+			function testScrollCustomConsoleComponentButtonText() {
+        		//Scroll the custom console component button text from right to left
+            	sforce.console.scrollCustomConsoleComponentButtonText(500, 10, true, function(result){
+            	if (result.success) {
+               		alert('The text scrolling starts!');
+              	} else {
+               		alert('Could not initiate the text scrolling!');
+              	}
+            });
+           }
+    	
+    	});
+    	
+    </script>
+    
+
+    
+</apex:page>

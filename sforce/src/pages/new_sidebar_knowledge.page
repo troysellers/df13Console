@@ -1,0 +1,127 @@
+<apex:page controller="new_KnowledgeController">
+    <style>
+        .article{
+            background: #F0F2F2;
+            border: 1px solid #c2c2c2;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+        .internalArticle {
+            margin: 5px 5px 0px;
+            border: 1px solid #c2c2c2;
+            background: #FFFFFF;
+            overflow: hidden;
+            padding: 5px 5px 0px 5px;
+        }
+        .articleTitle {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            border-bottom: 1px solid #c2c2c2;
+            
+        }
+        .articleSummary {
+            padding: 5px 0px;
+        }
+        .articleStats {
+            margin-left: 10px;
+            margin-right: 10px;
+            margin-top: 3px;
+            margin-bottom: 3px;
+            overflow: hidden;
+        }
+        .viewStat{
+            float:right;
+            padding-top:4px;
+        }
+        .openArticleBtn {
+            background: url('{!$Resource.cs_arrows}') no-repeat;
+            cursor: hand; 
+            cursor: pointer;
+            width: 68px;
+            height: 25px;
+            float: right;
+            padding-bottom: 5px;
+        }
+
+    </style>
+
+	<div class="Container" id="articleContainer">
+    	<div class="Component">
+        	<div class="ComponentHeader">
+            	<img class="icon" src="{!$Resource.console_component_icon_location}"/>
+                <div class="text">Knowledge</div>
+            </div>
+            <div id="articles">
+            </div>              
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		var j$ = jQuery.noConflict();
+		j$(document).ready(function() {
+			// expecting the object id that caused this event to fire
+			// event firing needs to cause partial page re-render
+			sforce.console.addEventListener('refreshEvent', function(result) {
+				getArticles();	
+			});
+			// perform on initial render
+			getArticles();
+		});
+		
+		function getArticles() {
+			sforce.console.getFocusedSubtabObjectId(function (result) {
+				Visualforce.remoting.Manager.invokeAction(
+            		'{!$RemoteAction.new_KnowledgeController.getKnowledge}',
+            		result.id, 
+            		renderArticles,
+            		{escape:false}
+        		);	
+			});
+
+		}
+		
+		function renderArticles(result, event) {
+			if(event.status) {
+				jsObj = j$.parseJSON(result);
+				if(jsObj.instruction == 'hide') {
+					j$("#articleContainer").hide();
+				} else if (jsObj.instruction == 'error') {
+					j$("#articleContainer").show();
+					j$("#articles").html('There has been an error processing your request <p>'+jsObj.errorMessage+'</p>');
+				}else if (jsObj.instruction == 'show') {			
+					buildArticlesHTML(jsObj);
+					j$("#articleContainer").show();
+				} 
+			} else {
+				console.log('Event ['+event.status+'] result ['+result+']');
+			}
+		}
+		
+		function buildArticlesHTML(jsObj) {
+			var innerHTML = '';
+			var articles = jsObj['articles'];
+			for(var i=0 ; i<articles.length ; i++) {
+            	innerHTML += '<div class="article">';
+	            innerHTML += '<div class="internalArticle">';
+	            innerHTML += '<div class="articleTitle">'+articles[i].title+'</div>';
+	            innerHTML += '<div class="articleSummary">'+articles[i].summary+'</div>';
+	            innerHTML += '<div>';
+	            innerHTML += '<div class="openArticleBtn" onclick="javascript:openArticleInNewTab(\''+articles[i].id+'\',\''+articles[i].title+'\');"></div>';
+	            innerHTML += '</div></div>';
+	            innerHTML += '<div class="articleStats">';
+	            innerHTML += 'Published: '+articles[i].publishDate;
+	            innerHTML += '<img class="viewStat" src=\'/img/knowledge/whatshot_'+articles[i].viewStat+'.gif\'/>';
+	            innerHTML += '</div></div>';
+			}
+			j$("#articleContainer").html(innerHTML);
+		}
+		
+		function openArticleInNewTab(articleId, articleTitle) {
+            // open the selected article and focus
+            sforce.console.getFocusedPrimaryTabId(function (result) {
+                sforce.console.openSubtab(result.id, '/'+articleId, true, articleTitle, null);
+            });            
+		}
+	</script>
+</apex:page>

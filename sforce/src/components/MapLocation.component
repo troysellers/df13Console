@@ -1,0 +1,72 @@
+<apex:component controller="MapLocation" >
+    <apex:attribute required="true" type="String" name="location" assignTo="{!location}" description="The Location on which the Map Should center"/>
+    <apex:attribute required="false" type="String" name="height" assignTo="{!height}" description="Customize the Height of the Map" default="300px"/>
+    <apex:attribute required="false" type="String" name="border" assignTo="{!border}" description="CSS Border Definition"/>
+    <apex:attribute required="false" type="String" name="zoom" assignTo="{!zoom}" description="Zoom Level of the map 1 = world level -> 20 = street level" default="15"/>
+    <apex:attribute required="false" type="Boolean" name="scrollWheelEnabled" assignTo="{!scrollWheelEnabled}" description="Set True if you wish to allow the scroll wheel to control zoom" default="false" />
+    <apex:attribute required="false" type="String" name="infoWindowHTML" assignTo="{!infoWindowHTML}" description="HTML of the Info Window Popup, Leave Blank for no Window"/>
+    <apex:attribute required="false" type="String" name="mapType" assignTo="{!mapType}" description="Map Type Options HYBRID, ROADMAP, SATELLITE, TERRAIN" default="ROADMAP" />
+    <apex:attribute required="false" type="String" name="iconURL" assignTo="{!iconURL}" description="Map Icon URL" default="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FE7569" />
+    
+    <style>
+        #map_canvas {
+            width: 100%;
+            height: {!height};
+            border: {!border};
+        }
+    </style>
+    
+    <apex:includeScript value="https://maps.googleapis.com/maps/api/js?sensor=false" />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"/>
+    
+    <script>
+        (function($j) {
+            var geocoder;
+            var map;
+
+            $j(document).ready(function(){
+                var location = '{!location}';
+                geocoder = new google.maps.Geocoder();
+        
+                geocoder.geocode( { 'address': location}, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var mapOptions = {
+                            zoom: {!zoom},
+                            scrollwheel: {!scrollWheelEnabled},
+                            center: results[0].geometry.location,
+                            disableDefaultUI: true,
+                            mapTypeId: google.maps.MapTypeId.{!mapType}
+                        }
+                        map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+        
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            icon: '{!iconURL}',
+                            position: results[0].geometry.location
+                        });
+        
+                        var contentString = '{!infoWindowHTML}';
+                        console.log('Console String Length ' + contentString.length);
+
+                        if(contentString !== '') {
+                            var infowindow = new google.maps.InfoWindow({
+                                content: contentString
+                            });
+                            
+                            google.maps.event.addListener(marker, 'click', function() {
+                                infowindow.open(map,marker);
+                            });
+                        }
+
+                    } else {
+                        alert('Geocode was not successful for the following reason: ' + status);
+                    }
+                });                
+            });
+        })(jQuery.noConflict());
+            
+    </script>
+    <div id="map_canvas">
+
+    </div>   
+</apex:component>

@@ -1,0 +1,115 @@
+body {
+	padding: 0px;
+	margin: 0px;
+}
+
+.errors {
+	font-weight: bold;
+	color: red;
+	font-size: 1.5em;
+	border: 2px solid red;	
+	margin: 10px;
+}
+.messages {
+	border: 2px solid yellow;	
+	margin: 10px;
+}
+
+#container {
+	width: 100%;
+	background-color: rgb(255,255,255);
+	border: 1px solid rgb(157,157,157);
+	font-family: Lucida Grande,Lucida Sans Unicode,Arial,sans-serif;
+}
+.detailContainer {
+	background-color: rgb(206,212,217);
+	width:100%;
+	margin-left:auto;
+	margin-right:auto;
+	padding-top: 20px;
+}	
+.topContainer {
+	width:90%;
+	margin-left:auto;
+	margin-right:auto;	
+	margin-bottom: 10px;
+}	
+.header {
+	background-color: rgb(169,192,214);	
+	padding: 5px;
+	border: 1px solid black;
+	font-weight: bold;
+	font-style: italic;
+}
+.labels {
+	float:left;
+	padding-right:40px;
+}
+.values {
+	float:left;
+}
+.label {
+	font-style: italic;
+}
+.value {
+}
+.invoiceDetails {
+	float:left;	
+	width:50%;
+}
+.addressDetails {
+	float:left;	
+	width:40%;
+}
+.orderTable {
+	width:90%;
+	border: 1px solid black;
+	font-size: 12px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.orderTable .odd {
+	background-color: rgb(255,2255,255);		
+}
+
+.orderTable .even {
+	background-color: rgb(218,218,218);		
+}
+
+.orderTable th {
+	background-color: rgb(204,233,243);			
+}
+	
+.orderTable td {
+	text-align: center;	
+}	
+
+.orderTable .orderID {
+	cursor: pointer;	
+}
+
+.orderId {
+	text-decoration: underline;
+	color: rgb(93,151,183);
+}
+
+#footer {
+	float:none;
+	height: 16px;
+	font-size:11px;
+	color: #808080;
+	background-color: rgb(206,212,217);
+    font-weight: normal;
+    letter-spacing: -0.5px;
+    text-align: center;
+    line-height: 20px;
+    padding-bottom: 5px;
+}
+
+.clearfix:after {
+	content: " ";
+   display: block; 
+   height: 0; 
+   clear: both;
+}

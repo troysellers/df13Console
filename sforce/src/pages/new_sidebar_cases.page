@@ -1,0 +1,107 @@
+<apex:page showHeader="false" controller="new_SidebarCasesController">
+	
+	<div class="Container" id="caseContainer"> 
+    	<div class="Component">
+        	<div class="ComponentHeader">
+            	<img class="icon" src="{!$Resource.console_component_icon_location}"/>
+            	<div class="text" id="caseHeader"></div>
+			</div> 
+			<div class="ComponentData" id="caseData"></div>
+		</div>
+	</div> 
+
+<script type="text/javascript">
+	
+	var j$ = jQuery.noConflict();
+	j$(document).ready(function () {
+		// expecting the object id that caused this event to fire
+		// event firing needs to cause partial page re-render
+		sforce.console.addEventListener('refreshEvent', function(result) {
+			getCaseListData();	
+		});
+		// perform on initial render
+		getCaseListData();
+	});
+
+	function getCaseListData() {
+		sforce.console.getFocusedSubtabObjectId(function(result) {
+			Visualforce.remoting.Manager.invokeAction(
+	            '{!$RemoteAction.new_SidebarCasesController.getCasesAsJSON}',
+	            result.id, 
+	            processCaseRemoting,
+	            {escape:false}
+	        );			
+		});
+	}
+	
+	function processCaseRemoting(result, event) {
+
+		if(event.status) {
+			jsObj = j$.parseJSON(result);
+			console.log(jsObj);
+			j$('#caseHeader').html(jsObj['objectLabelPlural']);
+			if(jsObj.instruction == 'hide') {
+				j$("#caseContainer").hide();
+			} else if (jsObj.instruction == 'empty') {
+				j$("#caseData").html('No results');
+			} else if (jsObj.instruction == 'show') {			
+				parseAndRenderCases(jsObj);
+			} else if (jsObj.instruction == 'error') {
+				j$("#caseContainer").show();
+				j$("#caseData").html(jsObj.errorMessage);
+			}
+		} else {
+			console.log('Event ['+event.status+'] result ['+result+']');
+		}
+	}
+	
+	function parseAndRenderCases(jsObj) {
+
+		console.log(jsObj);
+
+		// get field names and render header
+		// get object values and render list values
+	
+		var innerHtml = '<table><tr>';
+		var fieldLabels = jsObj['fieldLabels'];
+		var fieldNames = jsObj['fieldNames'];
+		
+		for(var i=0 ; i<fieldLabels.length ; i++) {
+			innerHtml += '<th>'+fieldLabels[i]+'</th>';
+		}
+		innerHtml += '</tr>';
+		
+		var objectData = jsObj['objects'];
+		for(var i=0 ; i<objectData.length ; i++) {
+			var obj = objectData[i];
+			innerHtml += '<tr>';
+			for(var j=0 ; j<fieldLabels.length ; j++) {
+			
+				innerHtml += '<td>'
+				if(j==0) {
+					innerHtml += '<a href="#" onclick="javascript:openCase(\''+obj["Id"]+'\')">';
+				}
+				innerHtml += obj[fieldNames[j]];
+				if(j==0){
+					innerHtml += '</a>';
+				} 
+				innerHtml +='</td>';
+			}
+			innerHtml += '</tr>';
+		}
+		innerHtml += '</table>';	
+		j$("#caseData").html(innerHtml);
+		j$("#caseContainer").show();
+	}	
+
+	function  openCase(caseId) {
+		// open the selected article and focus
+        sforce.console.getFocusedPrimaryTabId(function (result) {
+        	sforce.console.openSubtab(result.id, '/'+caseId, true, '', null);
+        });
+	} 
+
+</script>
+
+
+</apex:page>

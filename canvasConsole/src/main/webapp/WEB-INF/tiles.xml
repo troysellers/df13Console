@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<definition name="display.tiles" template="/templates/template.jsp">
+		<put-attribute name="title" value="Display Canvas" />
+		<put-attribute name="mainContent" value="/pages/displayCanvas.jsp" />
+	</definition>
+
+	<definition name="configure.tiles" template="/templates/component.jsp">
+		<put-attribute name="title" value="Configure" />
+		<put-attribute name="mainContent" value="/pages/configure.jsp" />
+	</definition>
+
+	<definition name="component.tiles" template="/templates/component.jsp">
+		<put-attribute name="title" value="Component" />
+		<put-attribute name="mainContent" value="/pages/component.jsp" />
+	</definition>
+
+	<definition name="orderdetail.tiles" template="/templates/component.jsp">
+		<put-attribute name="title" value="Order Detail" />
+		<put-attribute name="mainContent" value="/pages/orderDetail.jsp" />
+	</definition>
+
+</tiles-definitions>

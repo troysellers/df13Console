@@ -1,0 +1,106 @@
+<apex:page controller="new_SidebarOpportunitiesController">
+
+	<div class="Container" id="opptyContainer"> 
+    	<div class="Component">
+        	<div class="ComponentHeader">
+            	<img class="icon" src="{!$Resource.console_component_icon_location}"/>
+            	<div class="text" id="opptyHeader"></div>
+			</div> 
+			<div class="ComponentData" id="opptyData"></div>
+		</div>
+	</div> 
+
+<script type="text/javascript">
+	
+	var j$ = jQuery.noConflict();
+	j$(document).ready(function () {
+		// expecting the object id that caused this event to fire
+		// event firing needs to cause partial page re-render
+		sforce.console.addEventListener('refreshEvent', function(result) {
+			getOpptyListData();	
+		});
+		// perform on initial render
+		getOpptyListData();
+	});
+
+	function getOpptyListData() {
+		sforce.console.getFocusedSubtabObjectId(function(result) {
+			Visualforce.remoting.Manager.invokeAction(
+	            '{!$RemoteAction.new_SidebarOpportunitiesController.getOpptiesAsJSON}',
+	            result.id, 
+	            processOpptyRemoting,
+	            {escape:false}
+	        );			
+		});
+	}
+	
+	function processOpptyRemoting(result, event) {
+
+		if(event.status) {
+			jsObj = j$.parseJSON(result);
+			console.log(jsObj);
+			if(jsObj.instruction == 'hide') {
+				j$("#opptyContainer").hide();
+			} else if (jsObj.instruction == 'empty') {
+				j$("#opptyData").html('No results');
+			} else if (jsObj.instruction == 'show') {			
+				parseAndRenderOppties(jsObj);
+			} else if (jsObj.instruction == 'error') {
+				j$("#opptyContainer").show();
+				j$("#opptyData").html(jsObj.errorMessage);
+			}
+		} else {
+			console.log('Event ['+event.status+'] result ['+result+']');
+		}
+	}
+	
+	function parseAndRenderOppties(jsObj) {
+
+		console.log(jsObj);
+		
+		j$('#opptyHeader').html(jsObj['objectLabelPlural']);
+	
+		// get field names and render header
+		// get object values and render list values
+	
+		var innerHtml = '<table><tr>';
+		var fieldLabels = jsObj['fieldLabels'];
+		var fieldNames = jsObj['fieldNames'];
+		
+		for(var i=0 ; i<fieldLabels.length ; i++) {
+			innerHtml += '<th>'+fieldLabels[i]+'</th>';
+		}
+		innerHtml += '</tr>';
+		
+		var objectData = jsObj['objects'];
+		for(var i=0 ; i<objectData.length ; i++) {
+			var obj = objectData[i];
+			innerHtml += '<tr>';
+			for(var j=0 ; j<fieldLabels.length ; j++) {
+			
+				innerHtml += '<td>'
+				if(j==0) {
+					innerHtml += '<a href="#" onclick="javascript:openOppty(\''+obj["Id"]+'\')">';
+				}
+				innerHtml += obj[fieldNames[j]];
+				if(j==0){
+					innerHtml += '</a>';
+				} 
+				innerHtml +='</td>';
+			}
+			innerHtml += '</tr>';
+		}
+		innerHtml += '</table>';	
+		j$("#opptyData").html(innerHtml);
+		j$("#opptyContainer").show();
+	}	
+
+	function  openOppty(opptyId) {
+		// open the selected article and focus
+        sforce.console.getFocusedPrimaryTabId(function (result) {
+        	sforce.console.openSubtab(result.id, '/'+opptyId, true, '', null);
+        });
+	} 
+
+</script>
+</apex:page>

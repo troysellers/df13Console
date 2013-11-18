@@ -1,0 +1,182 @@
+/*
+ * Copyright (c) 2013, salesforce.com, inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided
+ * that the following conditions are met:
+ *
+ *    Redistributions of source code must retain the above copyright notice, this list of conditions and the
+ *    following disclaimer.
+ *
+ *    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+ *    the following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ *    Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
+ *    promote products derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+body {
+	padding: 0px;
+	margin: 0px;
+	font-family: VAGRoundedStdLight,Arial,sans-serif !important;
+}
+
+#header {
+}
+#headerContainer {
+	width: 960px;
+	height: 100px;
+	margin-left: auto;
+	margin-right:auto;
+	/*background: url('../images/sfLogo.png') no-repeat;*/
+}
+
+#heading {
+	padding-left:120px;
+    font-size: 24px;
+    padding-top:30px;
+}
+#breadcrumb {
+	padding-left:120px;
+	padding-top: 15px;
+	font-family: Lucida Grande,Lucida Sans Unicode,Arial,sans-serif;
+    font-weight: normal;
+    letter-spacing: -0.5px;
+    font-size: 14px;
+    color: #535353;
+}
+#breadcrumb ul {
+	
+}
+#breadcrumb  li {
+	list-style: none;
+	display: inline;
+	padding-right:1em;
+	padding-left: .5em;
+}
+
+#breadcrumb li a {
+	text-decoration: 
+}
+
+.middle {
+	background-image: url("../images/right.png");
+	background-position: right;
+	background-repeat: no-repeat;
+}
+
+#mainContainer {
+	margin-left:auto;
+	margin-right:auto;
+	min-height: 25em;
+}
+
+#footer {
+	float:none;
+	height: 16px;
+	font-size:11px;
+	color: #808080;
+	font-family: Lucida Grande,Lucida Sans Unicode,Arial,sans-serif;
+    font-weight: normal;
+    letter-spacing: -0.5px;
+    text-align: center;
+    line-height: 20px;
+}
+
+#obmDetails {
+	text-align:center;
+}
+
+#xmlToggle {
+	font-size: 12px;
+	font-weight: normal;
+	color: grey;
+	cursor: pointer;
+}
+
+.obmTable {
+	border: 1px solid black;
+	width:90%;
+	table-layout: fixed;
+	margin-left:auto;
+	margin-right:auto;
+}
+.details {
+	width: 50%;
+	text-align:center;
+	float: left;
+}
+
+.details table {
+	table-layout: fixed;
+	font-size: 12px;
+}
+.details td {
+	font-size: 12px;
+	word-wrap:break-word;
+	text-align: center;
+}
+.obmCell {
+	font-size: 12px;
+	border: 1px solid grey;
+	word-wrap:break-word;
+	text-align: center;
+}
+
+.actionMessage {
+	padding: 0px;
+	margin: 0px;
+}
+/* Struts Tag styling */
+.actionMessage li {
+	list-style: none;
+	border: 1px solid black;
+}
+
+.objectDetails {
+	width: 50%;
+	float:left;
+}
+
+.clearfix:after {
+	content: " ";
+   display: block; 
+   height: 0; 
+   clear: both;
+}
+
+.section {
+	border-top-left-radius: 10px;
+	-moz-border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	-moz-border-top-right-radius: 10px;
+	-moz-box-shadow: 5px 5px 5px #888;
+	-webkit-box-shadow: 5px 5px 5px #888;
+	box-shadow: 5px 5px 5px #888;	
+	display:inline-block;
+	width: 90%;
+	margin: 5px 10px;
+}
+.sectionHeading {
+	background-color: #558CD3; 
+	border-top-left-radius: 10px;
+	-moz-border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	-moz-border-top-right-radius: 10px;
+	height: 20px;
+	padding: 3px 15px 2px 6px;
+	text-align: left;
+	font-size:1.2em;
+	color: white;
+}
+.sectionContent {
+	min-height: 50px;
+}

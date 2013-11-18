@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2013, salesforce.com, inc. All rights reserved. Redistribution 
+	and use in source and binary forms, with or without modification, are permitted 
+	provided that the following conditions are met: Redistributions of source 
+	code must retain the above copyright notice, this list of conditions and 
+	the following disclaimer. Redistributions in binary form must reproduce the 
+	above copyright notice, this list of conditions and the following disclaimer 
+	in the documentation and/or other materials provided with the distribution. 
+	Neither the name of salesforce.com, inc. nor the names of its contributors 
+	may be used to endorse or promote products derived from this software without 
+	specific prior written permission. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT 
+	HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, 
+	BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+	FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+	OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+	EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
+	OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+	ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+	OF SUCH DAMAGE. -->
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "struts-2.0.dtd">
+
+<struts>
+
+	<constant name="struts.devMode" value="true" />
+
+	<package name="com.force.aus.df13.canvas.actions" extends="struts-default">
+		
+		<result-types>
+			<result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />
+		</result-types>
+		
+		<interceptors>
+			<interceptor name="signedRequestInterceptor"
+				class="com.force.aus.df13.canvas.interceptors.SignedRequestInterceptor" />
+			<interceptor-stack name="defaultInterceptors">
+				<interceptor-ref name="signedRequestInterceptor" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+
+		<default-interceptor-ref name="defaultInterceptors" />
+
+		<global-results>
+			<result name="noSignedRequest">/noSignedRequest.jsp</result>
+		</global-results>
+
+		<action name="display" class="com.force.aus.df13.canvas.actions.GenericAction" method="execute">
+			<param name="pageName">Display</param>
+			<result name="success" type="tiles">display.tiles</result>
+		</action>		
+		
+		<action name="generateAccounts" class="com.force.aus.df13.canvas.actions.GenerateAccountsAction" method="execute">
+			<result name="success" type="chain">
+				<param name="actionName">configure</param>
+			</result>	
+			<result name="error" type="tiles">configure.tiles</result>	
+		</action>
+		
+		<action name="navigate" class="com.force.aus.df13.canvas.actions.NavigatePageAction" method="execute">
+			<param name="pageName">Navigate</param>
+			<result name="component" type="chain">
+				<param name="actionName">component</param>
+			</result>
+			<result name="detail" type="chain">
+				<param name="actionName">detail</param>
+			</result>
+			<result name="configure" type="chain">
+				<param name="actionName">configure</param>
+			</result>			
+		</action>	
+		
+		<action name="configure" class="com.force.aus.df13.canvas.actions.ConfigurePageAction" method="execute">
+			<param name="pageName">Configure</param>
+			<result name="success" type="tiles">configure.tiles</result>
+		</action>	
+		
+		<!-- Component page actions -->
+		<action name="component" class="com.force.aus.df13.canvas.actions.OrderComponentAction" method="execute">
+			<param name="pageName">Component</param>
+			<result name="success" type="tiles">component.tiles</result>
+		</action>	
+		<action name="detail" class="com.force.aus.df13.canvas.actions.OrderDetailAction" method="execute">
+			<param name="pageName">Order Detail</param>
+			<result name="success" type="tiles">orderdetail.tiles</result>
+		</action>
+	</package>
+
+</struts>

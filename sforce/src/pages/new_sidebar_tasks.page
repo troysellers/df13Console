@@ -1,0 +1,105 @@
+<apex:page showHeader="false" controller="new_SidebarActivitiesController">
+	
+	<div class="Container" id="taskContainer"> 
+    	<div class="Component">
+        	<div class="ComponentHeader">
+            	<img class="icon" src="{!$Resource.console_component_icon_location}"/>
+            	<div class="text" id="taskHeader"></div>
+			</div> 
+			<div class="ComponentData" id="taskData"></div>
+		</div>
+	</div> 
+
+<script type="text/javascript">
+	
+	var j$ = jQuery.noConflict();
+	j$(document).ready(function () {
+		// expecting the object id that caused this event to fire
+		// event firing needs to cause partial page re-render
+		sforce.console.addEventListener('refreshEvent', function(result) {
+			getTasks();	
+		});
+		// perform on initial render
+		getTasks();
+	});
+	
+	function getTasks(objectId) {
+		sforce.console.getFocusedSubtabObjectId (function(result) {
+			Visualforce.remoting.Manager.invokeAction(
+         	   '{!$RemoteAction.new_SidebarActivitiesController.getTasks}',
+            	result.id, 
+            	processTasks,
+            	{escape:false}
+        	);	
+		});
+	}
+	
+	function processTasks(result, event) {
+		if(event.status) {
+			jsObj = j$.parseJSON(result);
+			if(jsObj.instruction == 'hide') {
+				j$("#taskContainer").hide();
+			} else if (jsObj.instruction == 'empty') {
+				j$("#taskData").html('No results');
+				j$('#taskHeader').html(jsObj['objectLabelPlural']);
+			} else if(jsObj.instruction == 'show') {			
+				renderTasks(jsObj);
+			} else if (jsObj.instruction == 'error') {
+				j$("#taskContainer").show();
+				j$("#taskData").html(jsObj.errorMessage);
+			}
+		} else {
+			console.log('Event ['+event.status+'] result ['+result+']');
+		}
+	}
+	
+	function renderTasks(jsObj) {
+
+		console.log(jsObj);
+		
+		j$('#taskHeader').html(jsObj['objectLabelPlural']);
+	
+		// get field names and render header
+		// get object values and render list values
+	
+		var innerHtml = '<table><tr>';
+		var fieldLabels = jsObj['fieldLabels'];
+		var fieldNames = jsObj['fieldNames'];
+		
+		for(var i=0 ; i<fieldLabels.length ; i++) {
+			innerHtml += '<th>'+fieldLabels[i]+'</th>';
+		}
+		innerHtml += '</tr>';
+		
+		var objectData = jsObj['objects'];
+		for(var i=0 ; i<objectData.length ; i++) {
+			var obj = objectData[i];
+			innerHtml += '<tr>';
+			for(var j=0 ; j<fieldLabels.length ; j++) {
+				innerHtml += '<td>'
+				if(j==0) {
+					innerHtml += '<a href="#" onclick="javascript:openTask(\''+obj["Id"]+'\')">';
+				}
+				innerHtml += obj[fieldNames[j]];
+				if(j==0){
+					innerHtml += '</a>';
+				} 
+				innerHtml +='</td>';
+			}
+			innerHtml += '</tr>';
+		}
+		innerHtml += '</table>';	
+		j$("#taskData").html(innerHtml);
+		j$("#taskContainer").show();
+	}		
+
+	function  openTask(taskId) {
+		// open the selected task and focus
+        sforce.console.getFocusedPrimaryTabId(function (result) {
+        	sforce.console.openSubtab(result.id, '/'+taskId, true, '', null);
+        });
+	} 
+</script>
+
+
+</apex:page>
