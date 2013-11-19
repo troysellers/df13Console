@@ -33,7 +33,7 @@ global class new_SidebarCasesController {
 						fieldNames.add(fsm.getFieldPath());
 	            		query += fsm.getFieldPath() + ', ';
 	        		}
-	        		query += 'Id FROM Case where  accountId = \''+objectId+'\'';
+	        		query += 'Id FROM Case where  accountId = \''+objId+'\'';
 	        		System.debug('~~ query ['+query+']');	
 	        		try {	
 	        			cases = (List<Case>)Database.query(query);
