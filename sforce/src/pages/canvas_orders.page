@@ -1,5 +1,6 @@
 <apex:page standardController="Account" extensions="CanvasOrdersController">
 	<apex:includeScript value="/support/console/29.0/integration.js" />  
+	<apex:includeScript value="/canvas/sdk/js/30.0/controller.js" />
 	<apex:form >
   		<apex:inputHidden value="{!account.customer_id__c}"/>
   		<apex:canvasApp id="canvasApp" developerName="Order_Console_Component" 
@@ -8,7 +9,7 @@
 		</apex:form>
 	<script type="text/javascript">
 		Sfdc.canvas(function () {
-			Sfdc.canvas.parent.subscribe({name : "consoleDemoEvents.openOrderList", 
+			Sfdc.canvas.controller.subscribe({name : "consoleDemoEvents.openOrderList", 
 				onData : function (payload) {
 					// we should be receiving orderId and accountId (external) from Canvas app
 					var windowURL = '/apex/cs_orderdetail?orderNumber='+payload.orderId+'&custId='+payload.accountId;
